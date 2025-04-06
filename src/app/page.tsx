@@ -4,7 +4,6 @@ import { useState } from "react";
 import GlassCard from "@/components/glscard";
 import SystemOverview from "@/components/systemStat";
 import { Canvas } from "@react-three/fiber";
-import CameraCard from "@/components/maincard";
 
 export default function Home() {
   const [signalCompleted, setSignalCompleted] = useState(false);
@@ -15,19 +14,16 @@ export default function Home() {
     ssr: false,
   });
 
+  const handleClick = () => {
+    window.location.href = "/scanner";
+  };
+
   const handleSignalComplete = () => {
     setIsFading(true); // Trigger fade-out effect
     setTimeout(() => {
       setSignalCompleted(true); // After fade-out, show the new card
       setIsFading(false); // Reset fading state
     }, 500); // Duration should match the fade-out duration
-  };
-
-  const handleGoToNextInterface = () => {
-    setIsFading(true); // Trigger fade-out effect for transition
-    setTimeout(() => {
-      setShowCameraCard(true); // Show CameraCard after fading out
-    }, 500);
   };
 
   return (
@@ -119,7 +115,7 @@ export default function Home() {
               centerText={true}
               buttonText="Go to next interface..."
               showButton={true}
-              onButtonClick={handleGoToNextInterface}
+              onButtonClick={handleClick}
             />
           </div>
         ) : (
