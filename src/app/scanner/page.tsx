@@ -5,6 +5,10 @@ import GlassCard from "@/components/glscard";
 import SystemOverview from "@/components/systemStat";
 import { Canvas } from "@react-three/fiber";
 import Webcam from "react-webcam"; // Import Webcam
+import { Handlee, Instrument_Serif } from "next/font/google";
+import Glsbutton from "@/components/glsbutton";
+
+const instrumentSerif = Instrument_Serif({ weight: "400" });
 
 export default function Home() {
   const [signalCompleted, setSignalCompleted] = useState(false);
@@ -15,12 +19,13 @@ export default function Home() {
     ssr: false,
   });
 
-  const handleSignalComplete = () => {
-    setIsFading(true); // Trigger fade-out effect
-    setTimeout(() => {
-      setSignalCompleted(true); // After fade-out, show the new card
-      setIsFading(false); // Reset fading state
-    }, 500); // Duration should match the fade-out duration
+  const handleBack = () => {
+    window.location.href = "/";
+  };
+
+  const handleSave = () => {
+    // Implement save functionality here
+    console.log("Save button clicked");
   };
 
   return (
@@ -42,6 +47,7 @@ export default function Home() {
           }}
         />
       </div>
+
       <div className="absolute w-screen h-screen overflow-hidden">
         <div className="absolute inset-0">
           <Canvas>
@@ -56,47 +62,63 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="absolute flex items-center justify-center h-screen w-screen">
-        <div className="bg-transparent backdrop-blur-[20px] rounded-[10px] border border-[rgba(255,255,255,0.18)] p-8 w-[500px] h-[500px] flex flex-col justify-between">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold mb-2">Camera Viewfinder</h1>
-            <p className="text-sm opacity-70">This is a Chat History Demo</p>
+      <div className="flex flex-row">
+        <div
+          className={`flex items-center justify-center h-screen w-screen ${instrumentSerif.className}`}
+        >
+          <div className="bg-transparent backdrop-blur-[20px] rounded-[10px] border border-[rgba(255,255,255,0.18)] p-8 w-[500px] h-[500px] flex flex-col justify-between relative">
+            This card should appear after a scan is done, this ui should show
+            some recommendations when the scan is done. This is here until
+            backend is finished. This card should appear smoothly from left for
+            recommendations
           </div>
+          <div className="bg-transparent backdrop-blur-[20px] rounded-[10px] border border-[rgba(255,255,255,0.18)] p-8 w-[500px] h-[500px] flex flex-col justify-between relative">
+            {/* Webcam Viewfinder at the top */}
 
-          <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-center">
-              <span>Skin Color</span>
-              {/* Add your skin color selection component here */}
+            <div className="text-center mt-16 p-10">
+              <div className="absolute top-0 p-5 left-1/2 transform -translate-x-1/2">
+                <Webcam
+                  audio={false}
+                  height={900}
+                  width={800}
+                  screenshotFormat="image/jpeg"
+                  style={{
+                    borderRadius: "5px",
+                    border: "0.5px solid white",
+                    boxShadow: "0 0 10px rgba(255,255,255,0.3)",
+                  }}
+                />
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span>Skin Texture</span>
-              {/* Add your skin texture selection component here */}
+
+            <div className="flex flex-col gap-4">
+              <div className="flex justify-between items-center">
+                <span>Skin Color</span>
+                {/* Add your skin color selection component here */}
+              </div>
+              <div className="flex justify-between items-center">
+                <span>Skin Texture</span>
+                {/* Add your skin texture selection component here */}
+              </div>
+            </div>
+
+            <div className="flex justify-between mt-8">
+              <div>
+                <Glsbutton
+                  text="Back"
+                  onClick={handleBack}
+                  // onSignalComplete={handleSignalComplete}
+                />
+              </div>
+              <div>
+                <Glsbutton
+                  text="Save"
+                  onClick={handleSave}
+                  // onSignalComplete={handleSignalComplete}
+                />
+              </div>
             </div>
           </div>
-
-          <div className="flex justify-between mt-8">
-            <button className="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600 transition">
-              Back
-            </button>
-            <button className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 transition">
-              Save
-            </button>
-          </div>
-
-          <div className="mt-8 text-center">
-            <button className="bg-green-600 hover:bg-green-500 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto">
-              Speak
-            </button>
-          </div>
-
-          {/* Add Webcam component here */}
-          <Webcam
-            audio={false}
-            height={200}
-            width={200}
-            screenshotFormat="image/jpeg"
-            style={{ borderRadius: "10px" }}
-          />
         </div>
       </div>
 
