@@ -6,7 +6,7 @@ import { Instrument_Sans } from "next/font/google";
 const instrumentSerif = Instrument_Serif({ weight: "400" });
 const instrumentSans = Instrument_Sans({ weight: "400" });
 
-export default function Glsbutton({ onClick, text }) {
+export default function Glsbutton({ onClick, text, onSignalComplete }) {
   const [hovering, setHovering] = useState(false);
   const [progress, setProgress] = useState(0);
   const timerRef = useRef(null);
@@ -25,12 +25,14 @@ export default function Glsbutton({ onClick, text }) {
         clearInterval(intervalRef.current);
         clearTimeout(timerRef.current);
         onClick(); // Trigger click after 3s
+        if (onSignalComplete) onSignalComplete(true); // Pass signal to parent
       }
     }, 50);
 
     timerRef.current = setTimeout(() => {
-      // fallback in case interval didn't catch it
       setProgress(1);
+      if (onSignalComplete) onSignalComplete(true);
+      console.log("Signal Ready");
     }, 3000);
   };
 

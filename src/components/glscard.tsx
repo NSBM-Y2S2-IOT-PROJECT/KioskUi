@@ -62,11 +62,8 @@ export default function GlassCard({
       {showButton && (
         <div className="flex items-center justify-center p-20 bottom-0">
           <Glsbutton
-            text={buttonText || "Lets Get Started"} // Use buttonText or fallback to default text
-            onClick={() => {
-              console.log("Button clicked!");
-              onButtonClick("Custom Argument"); // Pass any argument to the function
-            }}
+            text={buttonText || "Lets Get Started"}
+            onClick={onButtonClick} // Use the passed onButtonClick function
           />
         </div>
       )}
