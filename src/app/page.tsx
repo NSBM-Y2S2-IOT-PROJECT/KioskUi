@@ -48,6 +48,17 @@ export default function Home() {
 
       <div className="absolute w-screen h-screen overflow-hidden">
         <div className="absolute inset-0">
+        <div className="absolute inset-0 z-0">
+  <div
+    className="w-full h-full"
+    style={{
+      background: "radial-gradient(ellipse at center, rgba(255,0,80,0.4), transparent 60%)",
+      filter: "blur(80px)",
+      animation: "pulse 5s ease-in-out infinite", 
+    }}
+  />
+</div>
+
           <Canvas>
             <ThreeCard
               initialWidth={2}
@@ -59,10 +70,21 @@ export default function Home() {
           </Canvas>
         </div>
       </div>
+      <div className="absolute inset-0 z-0">
+  <div
+    className="w-full h-full"
+    style={{
+      background: "radial-gradient(ellipse at center, rgba(255,0,80,0.4), transparent 70%)",
+      filter: "blur(80px)",
+      animation: "pulse 8s ease-in-out infinite",
+    }}
+  />
+</div>
+
 
       <SystemOverview />
 
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen px-4">
         {!signalCompleted ? (
           <div
             className={`transition-opacity duration-500 ${isFading ? "opacity-0" : "opacity-100"}`}
@@ -71,11 +93,10 @@ export default function Home() {
             }}
           >
             <GlassCard
-              heading="- Welcome ! -"
+              heading="Welcome !"
               description={
                 <>
-                  This is the VISUM Interactive Kiosk System. We will help you
-                  with all of your skincare needs...
+                  Introducing VISUM, your Interactive Kiosk System designed to elevate your skincare journey. Let us guide you with personalized solutions for all your skincare needs.
                 </>
               }
               textSize="text-[50pt]"
@@ -97,14 +118,13 @@ export default function Home() {
             }}
           >
             <GlassCard
-              heading="- How to Use -"
+              heading="How to Use"
               description={
                 <>
-                  1. This is a gesture-based system; use your hands to control.{" "}
+                  1. Enjoy a seamless gesture-based experience—simply use your hands to navigate.{" "}
                   <br />
-                  2. Capture an image of your face in the next interface; we
-                  will analyze it and give you recommendations. <br />
-                  3. You can also use our Virtual Assistant. <br />
+                  2. Snap a photo of your face on the next screen, and we’ll analyze it to provide tailored skincare recommendations. <br />
+                  3. Connect with our Virtual Assistant for personalized guidance. <br />
                 </>
               }
               textSize="text-[50pt]"
