@@ -28,6 +28,19 @@ export default function Home() {
 
   return (
     <>
+      <style jsx global>{`
+        html,
+        body {
+          overflow: hidden;
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none; /* IE and Edge */
+        }
+
+        body::-webkit-scrollbar {
+          display: none; /* Chrome, Safari, Opera */
+        }
+      `}</style>
+
       <div
         style={{
           position: "relative",
@@ -48,16 +61,17 @@ export default function Home() {
 
       <div className="absolute w-screen h-screen overflow-hidden">
         <div className="absolute inset-0">
-        <div className="absolute inset-0 z-0">
-  <div
-    className="w-full h-full"
-    style={{
-      background: "radial-gradient(ellipse at center, rgba(255,0,80,0.4), transparent 60%)",
-      filter: "blur(80px)",
-      animation: "pulse 5s ease-in-out infinite", 
-    }}
-  />
-</div>
+          <div className="absolute inset-0 z-0">
+            <div
+              className="w-full h-full"
+              style={{
+                background:
+                  "radial-gradient(ellipse at center, rgba(255,0,80,0.4), transparent 60%)",
+                filter: "blur(80px)",
+                animation: "pulse 5s ease-in-out infinite",
+              }}
+            />
+          </div>
 
           <Canvas>
             <ThreeCard
@@ -71,16 +85,16 @@ export default function Home() {
         </div>
       </div>
       <div className="absolute inset-0 z-0">
-  <div
-    className="w-full h-full"
-    style={{
-      background: "radial-gradient(ellipse at center, rgba(255,0,80,0.4), transparent 70%)",
-      filter: "blur(80px)",
-      animation: "pulse 8s ease-in-out infinite",
-    }}
-  />
-</div>
-
+        <div
+          className="w-full h-full"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, rgba(255,0,80,0.4), transparent 70%)",
+            filter: "blur(80px)",
+            animation: "pulse 8s ease-in-out infinite",
+          }}
+        />
+      </div>
 
       <SystemOverview />
 
@@ -96,7 +110,9 @@ export default function Home() {
               heading="Welcome !"
               description={
                 <>
-                  Introducing VISUM, your Interactive Kiosk System designed to elevate your skincare journey. Let us guide you with personalized solutions for all your skincare needs.
+                  Introducing VISUM, your Interactive Kiosk System designed to
+                  elevate your skincare journey. Let us guide you with
+                  personalized solutions for all your skincare needs.
                 </>
               }
               textSize="text-[50pt]"
@@ -121,10 +137,13 @@ export default function Home() {
               heading="How to Use"
               description={
                 <>
-                  1. Enjoy a seamless gesture-based experience—simply use your hands to navigate.{" "}
+                  1. Enjoy a seamless gesture-based experience—simply use your
+                  hands to navigate. <br />
+                  2. Snap a photo of your face on the next screen, and we'll
+                  analyze it to provide tailored skincare recommendations.{" "}
                   <br />
-                  2. Snap a photo of your face on the next screen, and we’ll analyze it to provide tailored skincare recommendations. <br />
-                  3. Connect with our Virtual Assistant for personalized guidance. <br />
+                  3. Connect with our Virtual Assistant for personalized
+                  guidance. <br />
                 </>
               }
               textSize="text-[50pt]"
