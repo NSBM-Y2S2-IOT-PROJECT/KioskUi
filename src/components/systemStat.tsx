@@ -41,9 +41,9 @@ const StatusDisplay = ({ status, error, loading }) => {
         <div className={`${getStatusClass(status.GPIO)}`}>
           GPIO Device: {status.GPIO === "True" ? "Available" : "Unavailable"}
         </div>
-        <div className={`${getStatusClass(status.VisumServer)}`}>
+        <div className={`${!error ? "bg-green-800" : "bg-red-950"}`}>
           VSM Server:{" "}
-          {status.VisumServer === "True" ? "Available" : "Unavailable"}
+          {!error ? "Available" : "Unavailable"}
         </div>
         {error && <div className="bg-yellow-800 mt-1">Error: {error}</div>}
       </div>

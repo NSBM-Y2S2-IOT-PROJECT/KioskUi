@@ -60,6 +60,38 @@ export default function Home() {
     ssr: false,
   });
 
+  // Add keyboard event listener
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      // B key - Go back or start new scan
+      if (event.key === "b" || event.key === "B") {
+        if (selectedProduct) {
+          setSelectedProduct(null);
+        } else if (scanCompleted) {
+          setScanCompleted(false);
+        } else {
+          handleBack();
+        }
+      }
+
+      // S key - Start scan
+      if ((event.key === "s" || event.key === "S") && !isLoading) {
+        if (scanCompleted) {
+          setScanCompleted(false);
+        } else {
+          handleScan();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [scanCompleted, selectedProduct, isLoading]);
+
   const handleBack = () => {
     window.location.href = "/";
   };
