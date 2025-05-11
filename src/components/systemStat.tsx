@@ -87,7 +87,7 @@ export default function SystemOverview() {
     };
 
     getSystemStatus();
-    const interval = setInterval(getSystemStatus, 10000);
+    const interval = setInterval(getSystemStatus, 3000);
     return () => clearInterval(interval);
   }, []);
 

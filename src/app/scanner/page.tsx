@@ -56,6 +56,13 @@ export default function Home() {
   >({});
   const webcamRef = useRef<Webcam>(null);
 
+  // Add videoConstraints for specifying the device
+  const videoConstraints = {
+    deviceId: "/dev/video1",
+    width: 550,
+    height: 320,
+  };
+
   const ThreeCard = dynamic(() => import("../../components/ThreeCard"), {
     ssr: false,
   });
@@ -64,7 +71,7 @@ export default function Home() {
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       // B key - Go back or start new scan
-      if (event.key === "b" || event.key === "B") {
+      if (event.key === "f5" || event.key === "F5") {
         if (selectedProduct) {
           setSelectedProduct(null);
         } else if (scanCompleted) {
@@ -79,7 +86,10 @@ export default function Home() {
         if (scanCompleted) {
           setScanCompleted(false);
         } else {
-          handleScan();
+          setIsLoading(true);
+          setTimeout(() => {
+            handleScan();
+          }, 1000);
         }
       }
     };
@@ -247,23 +257,20 @@ export default function Home() {
   const handleScan = async () => {
     setIsLoading(true);
     try {
-      // Step 1: Capture image from webcam
       const imageSrc = captureImage();
       if (!imageSrc) {
         console.error("Failed to capture image from webcam");
         return;
       }
-
-      // Convert base64 to blob
+  
       const base64Data = imageSrc.split(",")[1];
       const blob = await fetch(`data:image/jpeg;base64,${base64Data}`).then(
         (res) => res.blob(),
       );
-
-      // Create FormData and append image
+  
       const formData = new FormData();
       formData.append("image", blob, "skin_image.jpg");
-
+  
       // Step 2: Send image for analysis
       const analysisResponse = await axios.post(
         `${SERVER_ADDRESS}/data/image_check`,
@@ -275,24 +282,27 @@ export default function Home() {
         },
       );
       const { skin_color, texture } = analysisResponse.data;
-
+  
       // Update skin parameters
       setSkinParameters({
         color: skin_color,
         texture: texture,
       });
-
+  
+      // Hide camera UI and show throbber
+      setActiveTab("loading");
+  
       // Step 3: Get recommendations based on analysis
       const recommendationResponse = await axios.get(
         `${SERVER_ADDRESS}/data/get_recommendations/${skin_color}/${texture}`,
       );
-
+  
       // Parse and set recommendations data
       const parsedRecommendations = parseRecommendationData(
         recommendationResponse.data,
       );
       setRecommendations(parsedRecommendations);
-
+  
       // Complete scan process
       setScanCompleted(true);
     } catch (error) {
@@ -931,58 +941,115 @@ export default function Home() {
               </div>
 
               {activeTab === "scan" && (
-                <>
-                  <div className="relative rounded-xl overflow-hidden mb-6 border border-white/20 h-[320px]">
-                    <Webcam
-                      audio={false}
-                      height={320}
-                      width={550}
-                      screenshotFormat="image/jpeg"
-                      className="object-cover"
-                      ref={webcamRef}
-                    />
-                    <div className="absolute inset-0 border-4 border-white/30 rounded-xl pointer-events-none"></div>
+  <>
+    <div className="relative rounded-xl overflow-hidden mb-6 border border-white/20 h-[320px]">
+      <Webcam
+        audio={false}
+        height={320}
+        width={550}
+        screenshotFormat="image/jpeg"
+        className="object-cover"
+        ref={webcamRef}
+        videoConstraints={videoConstraints}
+      />
+      <div className="absolute inset-0 border-4 border-white/30 rounded-xl pointer-events-none"></div>
 
-                    <div className="absolute top-3 right-3 px-2 py-1 bg-black/50 rounded-md text-xs text-white/80">
-                      Live Camera
-                    </div>
+      <div className="absolute top-3 right-3 px-2 py-1 bg-black/50 rounded-md text-xs text-white/80">
+        Live Camera
+      </div>
+    </div>
+
+    <div className="space-y-5 flex-grow">
+      <div className="bg-white/10 p-3 rounded-xl">
+        <p className="text-white/90 text-sm">
+          Position your face in the camera frame and click "Start
+          Scan" to begin skin analysis. Make sure your face is
+          well-lit and centered in the frame for best results.
+        </p>
+      </div>
+
+      {isLoading && (
+        <div className="flex justify-center items-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
+          <span className="ml-2 text-white/80">
+            Analyzing skin characteristics...
+          </span>
+        </div>
+      )}
+    </div>
+
+    <div className="flex justify-between mt-4 pt-4 border-t border-white/10">
+      <button
+        className="px-6 py-2 bg-white/10 hover:bg-white/20 transition-colors rounded-lg text-white/90"
+        onClick={handleBack}
+      >
+        Back
+      </button>
+      <button
+        className="px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg text-white font-medium hover:opacity-90 transition-opacity"
+        onClick={handleScan}
+        disabled={isLoading}
+      >
+        {isLoading ? "Scanning..." : "Start Scan"}
+      </button>
+    </div>
+  </>
+)}
+
+              {activeTab === "loading" && (
+                <div className="flex flex-col items-center justify-center space-y-10 h-full">
+                  <div className="flex flex-col items-center">
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-500 mb-6"></div>
+                    <h2 className="text-xl font-medium text-white/90 mb-2">
+                      Generating Recommendations
+                    </h2>
+                    <p className="text-white/60 text-center">
+                      Please wait while we analyze your skin data and prepare personalized recommendations.
+                    </p>
                   </div>
-
-                  <div className="space-y-5 flex-grow">
-                    <div className="bg-white/10 p-3 rounded-xl">
-                      <p className="text-white/90 text-sm">
-                        Position your face in the camera frame and click "Start
-                        Scan" to begin skin analysis. Make sure your face is
-                        well-lit and centered in the frame for best results.
-                      </p>
-                    </div>
-
-                    {isLoading && (
-                      <div className="flex justify-center items-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
-                        <span className="ml-2 text-white/80">
-                          Analyzing skin characteristics...
-                        </span>
+                  
+                  <div className="bg-white/10 p-6 rounded-xl w-full max-w-md">
+                    <h3 className="text-lg font-medium text-white/80 mb-4">Skin Analysis Results</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center">
+                        <div className="bg-indigo-500/20 p-2 rounded-lg mr-3">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 text-indigo-400"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <span className="text-white/60 text-sm">Skin Color</span>
+                          <p className="text-white/90 font-medium">{skinParameters.color}</p>
+                        </div>
                       </div>
-                    )}
+                      <div className="flex items-center">
+                        <div className="bg-purple-500/20 p-2 rounded-lg mr-3">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 text-purple-400"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L11 6.477V16h2a1 1 0 110 2H7a1 1 0 110-2h2V6.477L6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L9 4.323V3a1 1 0 011-1z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                        <div>
+                          <span className="text-white/60 text-sm">Texture</span>
+                          <p className="text-white/90 font-medium">{skinParameters.texture}</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-
-                  <div className="flex justify-between mt-4 pt-4 border-t border-white/10">
-                    <button
-                      className="px-6 py-2 bg-white/10 hover:bg-white/20 transition-colors rounded-lg text-white/90"
-                      onClick={handleBack}
-                    >
-                      Back
-                    </button>
-                    <button
-                      className="px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg text-white font-medium hover:opacity-90 transition-opacity"
-                      onClick={handleScan}
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "Scanning..." : "Start Scan"}
-                    </button>
-                  </div>
-                </>
+                </div>
               )}
 
               {activeTab === "settings" && (
