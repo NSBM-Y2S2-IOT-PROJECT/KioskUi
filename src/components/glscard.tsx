@@ -44,7 +44,7 @@ export default function GlassCard({
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={`bg-transparent backdrop-blur-[20px] rounded-[10px] border border-[rgba(255,255,255,0.18)] p-8 ${boxWidth} ${boxHeight} transition-transform duration-300 ease-out flex flex-col items-center justify-between animate-border-glow`}
+      className={`bg-transparent backdrop-blur-[20px] rounded-[10px] border border-[rgba(255,255,255,0.18)] p-8 ${boxWidth} ${boxHeight} transition-transform duration-300 ease-out flex flex-col items-center justify-between`}
       style={{ transformStyle: "preserve-3d" }}
     >
       <h2

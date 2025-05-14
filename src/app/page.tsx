@@ -1,18 +1,50 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import GlassCard from "@/components/glscard";
 import SystemOverview from "@/components/systemStat";
 import { Canvas } from "@react-three/fiber";
+import BluetoothScanner from "@/components/bluetoothCard";
 
 export default function Home() {
   const [signalCompleted, setSignalCompleted] = useState(false);
   const [showCameraCard, setShowCameraCard] = useState(false);
   const [isFading, setIsFading] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const [isHoveringLeft, setIsHoveringLeft] = useState(false);
+  const [isHoveringRight, setIsHoveringRight] = useState(false);
 
   const ThreeCard = dynamic(() => import("../components/ThreeCard"), {
     ssr: false,
   });
+
+  const menuCards = [
+    {
+      heading: "Skin Analysis",
+      description: "Get a detailed analysis of your skin condition with our advanced scanning technology.",
+      buttonText: "Start Scan",
+      onButtonClick: () => window.location.href = "/scanner",
+    },
+    {
+      heading: "Beauty Calculator",
+      description: "Calculate your beauty score using golden ratio",
+      buttonText: "Calculate",
+      onButtonClick: () => window.location.href = "/beauty",
+    },
+    {
+      heading: "Interaction Log",
+      description: "Your Previous Interactions with our system",
+      buttonText: "Check Interaction",
+      onButtonClick: () => window.location.href = "/interactions",
+    },
+    {
+      heading: "Virtual Assistant",
+      description: "Chat with our AI assistant to get answers to all your skincare questions.",
+      buttonText: "Talk to Assistant",
+      onButtonClick: () => console.log("Navigate to assistant"),
+    },
+  ];
 
   const handleClick = () => {
     window.location.href = "/scanner";
@@ -26,6 +58,34 @@ export default function Home() {
     }, 500); // Duration should match the fade-out duration
   };
 
+  const handleHowToUseComplete = () => {
+    setIsFading(true);
+    setTimeout(() => {
+      setShowMenu(true);
+      setIsFading(false);
+    }, 500);
+  };
+
+  useEffect(() => {
+    let interval;
+    
+    if (isHoveringLeft) {
+      interval = setInterval(() => {
+        setActiveCardIndex((prevIndex) => 
+          prevIndex > 0 ? prevIndex - 1 : menuCards.length - 1
+        );
+      }, 1000); // Change slide every second when hovering left
+    } else if (isHoveringRight) {
+      interval = setInterval(() => {
+        setActiveCardIndex((prevIndex) => 
+          (prevIndex + 1) % menuCards.length
+        );
+      }, 1000); // Change slide every second when hovering right
+    }
+    
+    return () => clearInterval(interval);
+  }, [isHoveringLeft, isHoveringRight, menuCards.length]);
+
   return (
     <>
       <style jsx global>{`
@@ -38,6 +98,64 @@ export default function Home() {
 
         body::-webkit-scrollbar {
           display: none; /* Chrome, Safari, Opera */
+        }
+
+        @keyframes slideIn {
+          from { transform: translateX(100px); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+
+        .carousel-container {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .carousel-nav {
+          position: absolute;
+          height: 100%;
+          width: 150px;
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background-color 0.3s ease;
+        }
+
+        .carousel-nav:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .carousel-nav-left {
+          left: 0;
+          cursor: w-resize;
+        }
+
+        .carousel-nav-right {
+          right: 0;
+          cursor: e-resize;
+        }
+
+        .carousel-indicator {
+          position: absolute;
+          bottom: 20px;
+          display: flex;
+          gap: 10px;
+        }
+
+        .indicator-dot {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background-color: rgba(255, 255, 255, 0.3);
+          transition: background-color 0.3s ease;
+        }
+
+        .indicator-dot.active {
+          background-color: rgba(255, 255, 255, 0.9);
         }
       `}</style>
 
@@ -95,7 +213,7 @@ export default function Home() {
           }}
         />
       </div>
-
+      <BluetoothScanner />
       <SystemOverview />
 
       <div className="flex items-center justify-center h-screen px-4">
@@ -110,7 +228,7 @@ export default function Home() {
               heading="Welcome !"
               description={
                 <>
-                  Introducing VISUM, your Interactive Kiosk System designed to
+                  Introducing VISUM, your Interactive Kiosk System designed by Frushion to
                   elevate your skincare journey. Let us guide you with
                   personalized solutions for all your skincare needs.
                 </>
@@ -126,7 +244,7 @@ export default function Home() {
               onButtonClick={handleSignalComplete}
             />
           </div>
-        ) : !showCameraCard ? (
+        ) : !showMenu ? (
           <div
             className={`transition-opacity duration-500 ${isFading ? "opacity-0" : "opacity-100"}`}
             style={{
@@ -152,19 +270,73 @@ export default function Home() {
               boxHeight="h-[550px]"
               tilt={true}
               centerText={true}
-              buttonText="Go to next interface..."
+              buttonText="Explore Options"
               showButton={true}
-              onButtonClick={handleClick}
+              onButtonClick={handleHowToUseComplete}
             />
           </div>
         ) : (
-          <div
-            className={`transition-opacity duration-500 ${isFading ? "opacity-0" : "opacity-100"}`}
-            style={{
-              transition: "opacity 0.5s ease-out",
-            }}
+          <div 
+            className={`carousel-container transition-opacity duration-500 ${isFading ? "opacity-0" : "opacity-100"}`} 
+            style={{ transition: "opacity 0.5s ease-out" }}
           >
-            <CameraCard />
+            {/* Left navigation area */}
+            <div 
+              className="carousel-nav carousel-nav-left"
+              onMouseEnter={() => setIsHoveringLeft(true)}
+              onMouseLeave={() => setIsHoveringLeft(false)}
+            >
+              {isHoveringLeft && (
+                <div className="text-white text-4xl opacity-50">
+                  &#8249;
+                </div>
+              )}
+            </div>
+
+            {/* Active card with animation */}
+            <div style={{ 
+              animation: "slideIn 0.5s ease-out", 
+              position: "relative",
+              zIndex: 5
+            }}>
+              <GlassCard
+                heading={menuCards[activeCardIndex].heading}
+                description={menuCards[activeCardIndex].description}
+                textSize="text-[40pt]"
+                textSize2="text-[18pt]"
+                boxWidth="w-[550px]"
+                boxHeight="h-[450px]"
+                tilt={true}
+                centerText={true}
+                showButton={true}
+                buttonText={menuCards[activeCardIndex].buttonText}
+                onButtonClick={menuCards[activeCardIndex].onButtonClick}
+              />
+            </div>
+
+            {/* Right navigation area */}
+            <div 
+              className="carousel-nav carousel-nav-right"
+              onMouseEnter={() => setIsHoveringRight(true)}
+              onMouseLeave={() => setIsHoveringRight(false)}
+            >
+              {isHoveringRight && (
+                <div className="text-white text-4xl opacity-50">
+                  &#8250;
+                </div>
+              )}
+            </div>
+
+            {/* Indicator dots */}
+            <div className="carousel-indicator">
+              {menuCards.map((_, index) => (
+                <div 
+                  key={index}
+                  className={`indicator-dot ${index === activeCardIndex ? 'active' : ''}`}
+                  onClick={() => setActiveCardIndex(index)}
+                />
+              ))}
+            </div>
           </div>
         )}
       </div>
