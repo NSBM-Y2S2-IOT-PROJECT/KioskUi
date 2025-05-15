@@ -42,7 +42,7 @@ export default function Home() {
       heading: "Virtual Assistant",
       description: "Chat with our AI assistant to get answers to all your skincare questions.",
       buttonText: "Talk to Assistant",
-      onButtonClick: () => console.log("Navigate to assistant"),
+      onButtonClick: () => window.location.href = "/assistant",
     },
   ];
 

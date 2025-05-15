@@ -3,14 +3,26 @@ import React, { useState, useRef } from "react";
 import { Instrument_Serif } from "next/font/google";
 import { Instrument_Sans } from "next/font/google";
 
-const instrumentSerif = Instrument_Serif({ weight: "400" });
-const instrumentSans = Instrument_Sans({ weight: "400" });
+const instrumentSerif = Instrument_Serif({ 
+  weight: "400", 
+  subsets: ["latin"] 
+});
+const instrumentSans = Instrument_Sans({ 
+  weight: "400", 
+  subsets: ["latin"] 
+});
 
-export default function Glsbutton({ onClick, text, onSignalComplete }) {
+interface GlsbuttonProps {
+  onClick: () => void;
+  text: string;
+  onSignalComplete?: (ready: boolean) => void;
+}
+
+export default function Glsbutton({ onClick, text, onSignalComplete }: GlsbuttonProps) {
   const [hovering, setHovering] = useState(false);
   const [progress, setProgress] = useState(0);
-  const timerRef = useRef(null);
-  const intervalRef = useRef(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMouseEnter = () => {
     setHovering(true);
@@ -22,8 +34,8 @@ export default function Glsbutton({ onClick, text, onSignalComplete }) {
       let newProgress = Math.min(elapsed / 3000, 1);
       setProgress(newProgress);
       if (newProgress === 1) {
-        clearInterval(intervalRef.current);
-        clearTimeout(timerRef.current);
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        if (timerRef.current) clearTimeout(timerRef.current);
         onClick(); // Trigger click after 3s
         if (onSignalComplete) onSignalComplete(true); // Pass signal to parent
       }
@@ -39,8 +51,8 @@ export default function Glsbutton({ onClick, text, onSignalComplete }) {
   const handleMouseLeave = () => {
     setHovering(false);
     setProgress(0);
-    clearInterval(intervalRef.current);
-    clearTimeout(timerRef.current);
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (timerRef.current) clearTimeout(timerRef.current);
   };
 
   return (

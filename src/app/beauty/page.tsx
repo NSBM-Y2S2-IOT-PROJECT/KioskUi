@@ -36,7 +36,7 @@ export default function Home() {
             initialWidth={1}
             initialHeight={1}
             initialDepth={1}
-            follow_mouse={false}
+            // follow_mouse={false}
             auto_rotate={true}
           />
         </Canvas>

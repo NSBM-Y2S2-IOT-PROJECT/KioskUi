@@ -1,13 +1,31 @@
 "use client";
-import { useRef } from "react";
+import { useRef, ReactNode, MouseEvent } from "react";
 import { Instrument_Serif } from "next/font/google";
 import Glsbutton from "@/components/glsbutton";
 
-const instrumentSerif = Instrument_Serif({ weight: "400" });
+const instrumentSerif = Instrument_Serif({ 
+  weight: "400",
+  subsets: ["latin", "latin-ext"]
+});
 const instrumentSerifBold = Instrument_Serif({
   weight: "400",
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
 });
+
+interface GlassCardProps {
+  heading: string;
+  description: string;
+  textSize?: string;
+  textSize2?: string;
+  boxWidth?: string;
+  boxHeight?: string;
+  tilt?: boolean;
+  centerText?: boolean;
+  buttonText?: string;
+  showButton?: boolean;
+  onButtonClick?: () => void;
+  children?: ReactNode;
+}
 
 export default function GlassCard({
   heading,
@@ -21,11 +39,12 @@ export default function GlassCard({
   buttonText = "",
   showButton = false,
   onButtonClick = () => {},
-}) {
-  const cardRef = useRef(null);
+  children,
+}: GlassCardProps) {
+  const cardRef = useRef<HTMLDivElement | null>(null);
 
-  const handleMouseMove = (e) => {
-    if (!tilt) return; // Skip tilt logic if tilt is false
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    if (!tilt || !cardRef.current) return; // Skip tilt logic if tilt is false
 
     const card = cardRef.current;
     const { left, top, width, height } = card.getBoundingClientRect();
@@ -35,7 +54,7 @@ export default function GlassCard({
   };
 
   const handleMouseLeave = () => {
-    if (!tilt) return; // Skip resetting the transform if tilt is false
+    if (!tilt || !cardRef.current) return; // Skip resetting the transform if tilt is false
     cardRef.current.style.transform = `rotateX(0deg) rotateY(0deg)`;
   };
 
@@ -66,12 +85,20 @@ export default function GlassCard({
         {description}
       </p>
 
+      {/* Render children if provided */}
+      {children && (
+        <div className="w-full mt-6">
+          {children}
+        </div>
+      )}
+
       {/* Conditionally render the button */}
       {showButton && (
         <div className="flex items-center justify-center p-20 bottom-0">
           <Glsbutton
             text={buttonText || "Lets Get Started"}
             onClick={onButtonClick} // Use the passed onButtonClick function
+            onSignalComplete={() => {}}
           />
         </div>
       )}

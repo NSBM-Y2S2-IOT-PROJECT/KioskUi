@@ -1,8 +1,14 @@
 import { Instrument_Serif } from "next/font/google";
 import { Instrument_Sans } from "next/font/google";
 
-const instrumentSerif = Instrument_Serif({ weight: "400" });
-const instrumentSans = Instrument_Sans({ weight: "400" });
+const instrumentSerif = Instrument_Serif({ 
+  weight: "400", 
+  subsets: ["latin"] 
+});
+const instrumentSans = Instrument_Sans({ 
+  weight: "400", 
+  subsets: ["latin"] 
+});
 // components/Header.js
 export default function Header() {
   return (

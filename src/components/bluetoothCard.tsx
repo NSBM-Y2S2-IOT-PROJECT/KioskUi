@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useEffect, useState } from "react";
 import { Instrument_Serif } from "next/font/google";
+import SERVER_ADDRESS from "config";
 
 const instrumentSerif = Instrument_Serif({ 
     weight: "400",
@@ -32,7 +33,7 @@ export default function BluetoothCard() {
       setScanning(true);
       setError(null);
       
-      const response = await fetch("http://localhost:5000/data/scan_bluetooth");
+      const response = await fetch(`${SERVER_ADDRESS}/data/scan_bluetooth`);
       const data: BluetoothResponse = await response.json();
       
       const currentTime = Date.now();

@@ -357,10 +357,10 @@ export default function BluetoothInteractions() {
             initialWidth={2}
             initialHeight={2}
             initialDepth={2}
-            follow_mouse={false}
+            // follow_mouse={false}
             auto_rotate={true}
-            topText="Bluetooth"
-            descriptiveText="Scanner"
+            // topText="Bluetooth"
+            // descriptiveText="Scanner"
           />
         </Canvas>
       </div>

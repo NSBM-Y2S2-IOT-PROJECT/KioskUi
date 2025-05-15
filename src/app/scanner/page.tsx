@@ -15,7 +15,10 @@ import GlassCard from "@/components/glscard";
 import Glsbutton from "@/components/glsbutton";
 import SERVER_ADDRESS from "config";
 
-const instrumentSerif = Instrument_Serif({ weight: "400" });
+const instrumentSerif = Instrument_Serif({ 
+  weight: "400",
+  subsets: ["latin"]
+});
 const inter = Inter({ subsets: ["latin"] });
 
 interface SkinParameters {
@@ -969,7 +972,7 @@ export default function Home() {
                     <Glsbutton
                       text={isLoading ? "Scanning..." : "Start Scan"}
                       onClick={handleScan}
-                      disabled={isLoading}
+                      // disabled={isLoading}
                     />
                   </div>
                 </>
