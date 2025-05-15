@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import { useState, useEffect, useRef, Key } from "react";
 import { Instrument_Serif, Instrument_Sans } from "next/font/google";
 import { motion, AnimatePresence } from "framer-motion";
+import SERVER_ADDRESS from "config";
 import { FaBluetooth, FaSearch, FaHistory } from 'react-icons/fa';
 import Glsbutton from "../../components/glsbutton";
 
@@ -123,7 +124,7 @@ export default function BluetoothInteractions() {
         }, 100);
       }
       
-      const response = await fetch("http://localhost:5000/data/scan_bluetooth");
+      const response = await fetch(`${SERVER_ADDRESS}/data/scan_bluetooth`);
       const data: BluetoothResponse = await response.json();
       
       const currentTime = Date.now();
@@ -326,7 +327,7 @@ export default function BluetoothInteractions() {
       setSelectedDevice(device);
       setShowingInteractions(true);
       
-      const response = await fetch("http://localhost:5000/data/search_interactions", {
+      const response = await fetch(`${SERVER_ADDRESS}/data/search_interactions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

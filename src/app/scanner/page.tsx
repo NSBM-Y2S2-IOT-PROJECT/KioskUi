@@ -821,8 +821,8 @@ export default function Scanner() {
                   )}
                 textSize="text-[40pt]"
                 textSize2="text-[18pt]"
-                boxWidth="w-[700px]"
-                boxHeight="h-[550px]"
+                boxWidth="w-[1000px]"
+                boxHeight="h-[650px]"
                 tilt={true}
                 centerText={true}
                 showButton={false}
