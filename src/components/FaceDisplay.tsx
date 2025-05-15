@@ -2,6 +2,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { Instrument_Serif } from "next/font/google";
 import Glsbutton from "@/components/glsbutton";
+import SERVER_ADDRESS from 'config';
 
 const instrumentSerif = Instrument_Serif({ 
   weight: "400",
@@ -207,7 +208,7 @@ export default function FaceDisplay() {
     ];
 
     try {
-      const res = await fetch('http://localhost:5000/data/score', {
+      const res = await fetch(`${ SERVER_ADDRESS }/data/score`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -2,7 +2,7 @@
 import dynamic from "next/dynamic";
 import { Canvas } from "@react-three/fiber";
 import Header from "@/components/Header";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Key } from "react";
 import { Instrument_Serif, Instrument_Sans } from "next/font/google";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaBluetooth, FaSearch, FaHistory } from 'react-icons/fa';
@@ -41,6 +41,34 @@ interface DeviceStatistics {
   weak: number;
 }
 
+interface Ingredient {
+  name?: string;
+  description?: string;
+  [key: string]: any; // For other potential properties
+}
+
+interface Product {
+  name?: string;
+  description?: string;
+  [key: string]: any; // For other potential properties
+}
+
+interface Analysis {
+  color: string;
+  texture: string;
+  [key: string]: any;
+}
+
+interface InteractionRecord {
+  timestamp: string;
+  device: BluetoothDevice;
+  Analysis?: Analysis;
+  Ingredients?: Ingredient[];
+  Products?: Product[];
+  Recommendations?: string;
+  [key: string]: any;
+}
+
 export default function BluetoothInteractions() {
 
   const [devices, setDevices] = useState<BluetoothDevice[]>([]);
@@ -62,7 +90,7 @@ export default function BluetoothInteractions() {
   
   // New state for interaction history
   const [showingInteractions, setShowingInteractions] = useState(false);
-  const [interactionHistory, setInteractionHistory] = useState<any[]>([]);
+  const [interactionHistory, setInteractionHistory] = useState<InteractionRecord[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<BluetoothDevice | null>(null);
   const [loadingInteractions, setLoadingInteractions] = useState(false);
   
@@ -689,7 +717,7 @@ export default function BluetoothInteractions() {
                         </h5>
                         {interactionHistory[currentInteractionIndex].Ingredients && interactionHistory[currentInteractionIndex].Ingredients.length > 0 ? (
                           <div className="flex flex-wrap gap-2">
-                            {interactionHistory[currentInteractionIndex].Ingredients.slice(0, 5).map((ingredient, i) => (
+                            {interactionHistory[currentInteractionIndex].Ingredients.slice(0, 5).map((ingredient: { name: any; }, i: Key | null | undefined) => (
                               <div key={i} className="px-2 py-1 -md bg-white/10 text-white/80 text-xs">
                                 {ingredient.name || ingredient}
                               </div>
@@ -715,7 +743,7 @@ export default function BluetoothInteractions() {
                         </h5>
                         {interactionHistory[currentInteractionIndex].Products && interactionHistory[currentInteractionIndex].Products.length > 0 ? (
                           <div className="flex flex-wrap gap-2">
-                            {interactionHistory[currentInteractionIndex].Products.slice(0, 5).map((product, i) => (
+                            {interactionHistory[currentInteractionIndex].Products.slice(0, 5).map((product: { name: any; }, i: Key | null | undefined) => (
                               <div key={i} className="px-2 py-1 -md bg-white/10 text-white/80 text-xs">
                                 {product.name || product}
                               </div>

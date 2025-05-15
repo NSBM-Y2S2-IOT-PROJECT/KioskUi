@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Instrument_Serif } from "next/font/google";
 import Glsbutton from "./glsbutton";
 import { Flip, ToastContainer, toast } from 'react-toastify';
+import SERVER_ADDRESS from "config";
 
 const instrumentSerif = Instrument_Serif({ 
     weight: "400",
@@ -56,7 +57,7 @@ interface BluetoothCardSaveProps {
 // Function to save interaction data to MongoDB via API
 const saveInteraction = async (data: any) => {
   try {
-    const response = await fetch("http://localhost:5000/data/save_interaction", {
+    const response = await fetch(`${SERVER_ADDRESS}/data/save_interaction`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -103,7 +104,7 @@ export default function BluetoothCardSave({
       setScanning(true);
       setError(null);
       
-      const response = await fetch("http://localhost:5000/data/scan_bluetooth");
+      const response = await fetch(`${SERVER_ADDRESS}/data/scan_bluetooth`);
       const data: BluetoothResponse = await response.json();
       
       const currentTime = Date.now();

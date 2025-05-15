@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import axios from "axios";
 import VoiceVisualizer from "@/components/VoiceVisualizer";
-import SERVER_ADDRESS from "config";
+import SERVER_ADDRESS, { SPEAK_ADDRESS } from "config";
 import { useRef } from "react";
 
 interface SpeechRecognitionEvent {
@@ -124,6 +124,7 @@ export default function MicButton() {
       const result = await axios.get(`${SERVER_ADDRESS}/data/get_assistance/${encodeURIComponent(prompt)}`);
       const responseText = result.data;
       setResponse(responseText);
+      // setSpeechSynthesis(True);
       speakResponse(responseText);
     } catch (error) {
       console.error("Error getting assistant response:", error);
@@ -135,82 +136,11 @@ export default function MicButton() {
   };
 
   const speakResponse = async (text: string) => {
-    // Stop any currently playing audio
-    if (audioPlayerRef.current) {
-      audioPlayerRef.current.pause();
-    }
-    
-    if (window.speechSynthesis) {
-      try {
-        setIsSpeaking(true);
-        // Cancel any ongoing speech
-        window.speechSynthesis.cancel();
-        
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = "en-US";
-        utterance.rate = 1;
-        utterance.pitch = 1;
-        utterance.volume = 1.0; // Set volume to maximum
-        
-        // Add event listeners for debugging and state management
-        utterance.onstart = () => {
-          console.log('Speech started');
-          setIsSpeaking(true);
-        };
-        utterance.onend = () => {
-          console.log('Speech ended');
-          setIsSpeaking(false);
-        };
-        utterance.onerror = (event) => {
-          console.error('Speech error:', event);
-          setIsSpeaking(false);
-          // Try fallback if speech synthesis fails
-          useFallbackAudio(text);
-        };
-        
-        // Use the global speechSynthesis directly
-        window.speechSynthesis.speak(utterance);
-        
-        // Fix for Chrome issue - sometimes speech doesn't start
-        // Force a resume if it's paused
-        setTimeout(() => {
-          if (window.speechSynthesis.paused) {
-            window.speechSynthesis.resume();
-          }
-        }, 100);
-      } catch (error) {
-        console.error("Error with speech synthesis:", error);
-        setIsSpeaking(false);
-        // Use fallback if traditional speech synthesis fails
-        useFallbackAudio(text);
-      }
-    } else {
-      console.error("Speech synthesis not supported in this browser");
-      // Try fallback audio approach
-      useFallbackAudio(text);
-    }
-  };
-  
-  // Fallback audio using Text-to-Speech API
-  const useFallbackAudio = async (text: string) => {
-    try {
-      // Call a text-to-speech service (Google TTS or similar)
-      // This requires setting up a backend endpoint that returns audio
-      const response = await axios.get(
-        `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-US&q=${encodeURIComponent(text)}`,
-        { responseType: 'blob' }
-      );
-      
-      // Create a blob URL from the response
-      const audioBlob = new Blob([response.data], { type: 'audio/mp3' });
-      const audioUrl = URL.createObjectURL(audioBlob);
-      
-      // Play the audio
-      playAudio(audioUrl);
-    } catch (error) {
-      console.error("Fallback audio failed:", error);
-    }
-  };
+      // Play the audio response
+      console.log(SPEAK_ADDRESS);
+      const result = axios.get(`${SPEAK_ADDRESS}/data/speak/${encodeURIComponent(text)}`);
+      console.log(result);
+  }
   
   // Helper to play audio from a URL
   const playAudio = (url: string) => {
